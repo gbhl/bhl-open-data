@@ -89,3 +89,7 @@ Using the `ItemID` field from the Item file (zero-padded to six digits) and the 
 ## Update Frequency
 
 Content is updated monthly, but due to conetent updates and new content ingest, this dataset may be out of date for up to a month compared to BHL's live content.
+
+## Copyright Notes
+
+While most content on BHL is either public domain or licensed through Creative Commons, some content from BHL remains in copyright with no conditions for reuse and is suppressed from this repository. The item.txt and part.txt files contain details on copyright status and Creative Commons licenses for all items in BHL.
