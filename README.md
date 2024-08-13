@@ -12,11 +12,11 @@ The files are organized via the following structure:
 ```
 bhl-open-data/
     images/
-        [ItemID]/
-            [ItemID]_0000.jp2
-            [ItemID]_0001.jp2
+        [BarCode]/
+            [BarCode]_0000.jp2
+            [BarCode]_0001.jp2
             [...]
-            [ItemID]_[####].jp2
+            [BarCode]_[####].jp2
     ocr/
         [ItemID]/
             [ItemID]-[PageID]-0000.txt
@@ -40,7 +40,7 @@ bhl-open-data/
 
 ### Images
 
-Images are stored as JPEG 2000 files with some amount of compression applied to retain a balance of quality and size. Generally BHL strives for 300 DPI or better resolution. Alternate file formats or sizes are not supplied at this time.
+Images are stored as JPEG 2000 files with some amount of compression applied to retain a balance of quality and size. Generally BHL strives for 300 DPI or better resolution. Alternate file formats or sizes are not supplied at this time. 
 
 ### OCR
 
