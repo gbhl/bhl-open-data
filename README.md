@@ -4,8 +4,11 @@ The Biodiversity Heritage Library (BHL) is the world's largest open access digit
 
 To document Earth's species and understand the complexities of swiftly-changing ecosystems in the midst of a major extinction crisis and widespread climate change, researchers need something that no single library can provide - access to the world's collective knowledge about biodiversity. While natural history books and archives contain information that is critical to studying biodiversity, much of this material is available in only a handful of libraries globally. Scientists have long considered this lack of access to biodiversity literature as a major impediment to the efficiency of scientific research.
 
+In 2024, BHL was accepted into the [Amazon AWS Open Data Sponsorship Program](https://aws.amazon.com/opendata/open-data-sponsorship-program/) and has uploaded its metadata, JPEG-2000 images, and OCR to AWS S3 for use by anyone at no cost.
+
 ## Open Data
-BHL's data is structured in a simple format of three buckets of content hosted on S3 at Amazon Web Services. The first bucket contains the JPEG 2000 page images of the scanned content at BHL and is organized by an identifying string. The second bucket is the text content of the page images, sourced either from automated Optical Character Recognition (OCR) software or manual transcription efforts. The third bucket of content is data contained in one of several data export files (in tab-separated format) that contain the majority of BHL's data. The files, images and OCR are all logically connected through identifiers and ID numbers.
+
+BHL's data is structured in a simple format of three "folders" in a bucket at at Amazon Web Services S3. The first folders contains the JPEG 2000 page images of the scanned content at BHL and is organized by an identifying string. The second folders is the text content of the page images, sourced either from automated Optical Character Recognition (OCR) software or manual transcription efforts. The third folders of content is data contained in one of several data export files (in tab-separated format) that contain the majority of BHL's data. The files, images and OCR are all logically connected through identifiers and ID numbers.
 
 The files are organized via the following structure:
 
