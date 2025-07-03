@@ -8,7 +8,7 @@ In 2024, BHL was accepted into the [Amazon AWS Open Data Sponsorship Program](ht
 
 ## Open Data
 
-BHL's data is structured in a simple format of three "folders" in a bucket at at Amazon Web Services S3. The first folders contains the JPEG 2000 page images of the scanned content at BHL and is organized by an identifying string. The second folders is the text content of the page images, sourced either from automated Optical Character Recognition (OCR) software or manual transcription efforts. The third folders of content is data contained in one of several data export files (in tab-separated format) that contain the majority of BHL's data. The files, images and OCR are all logically connected through identifiers and ID numbers.
+BHL's data is structured in a simple format of three "folders" in a bucket at at Amazon Web Services S3. The first folder, "/images/", contains the JPEG 2000 page images of the scanned content at BHL and is organized by an identifying string. The second folder, "/ocr/" contains the text content of the page images, sourced either from automated Optical Character Recognition (OCR) software or manual transcription efforts. The third folder, "/data/", contains the data export files (in tab-separated format) that contain the majority of BHL's data. The files, images and OCR are all logically connected through identifiers and ID numbers.
 
 The files are organized via the following structure:
 
@@ -21,11 +21,16 @@ bhl-open-data/
             [...]
             [BarCode]_[####].jp2
     ocr/
-        [ItemID]/
-            [ItemID]-[PageID]-0000.txt
-            [ItemID]-[PageID]-0001.txt
+        item-[ItemID]/
+            item-[ItemID]-[PageID]-0000.txt
+            item-[ItemID]-[PageID]-0001.txt
             [...]
-            [ItemID]-[PageID]-[####].txt
+            item-[ItemID]-[PageID]-[####].txt
+        part-[PartID]/
+            part-[PartID]-[PageID]-0000.txt
+            part-[PartID]-[PageID]-0001.txt
+            [...]
+            part-[PartID]-[PageID]-[####].txt
     data/
         title.txt.gz
         item.txt.gz
@@ -47,7 +52,7 @@ Images are stored as JPEG 2000 files with some amount of compression applied to 
 
 ### OCR
 
-OCR is stored as individual text files mostly in parallel to the page images. 
+OCR is stored as individual text files in parallel to the page images. The OCR is broken into two sets of files, one for *items* and one for *parts*. *Items* are usually cover-to-cover book-like things while *Parts* are usually individual journal articles. 
 
 ### Data
 
@@ -79,15 +84,20 @@ Data files are described in detail at https://www.biodiversitylibrary.org/data/T
 
 ## Using the Data
 
-From the Item file, the `BarCode` field is used to create the S3 path or URL to the image file. Pages are numbered sequentially and do not skip any numbers. Due to historical inconsistencies, the first image from an item may be number `[BarCode]_0000.jp2` or `[BarCode]_0001.jp2`.
+From the `/data/item.txt` file, the `BarCode` field is used to create the S3 path or URL to the image file. Pages are numbered sequentially and do not skip any numbers. Due to historical inconsistencies, the first image from an item may be number `[BarCode]_0000.jp2` or `[BarCode]_0001.jp2`.
 
-* S3 Path: `s3://bhl-open-data/images/[ItemID]/[ItemID]_0000.jp2`
-* Web URL: `https://bhl-open-data.s3.amazonaws.com/images/[ItemID]/[ItemID]_0000.jp2`
+* S3 Path: `s3://bhl-open-data/images/[BarCode]/[BarCode]_0000.jp2`
+* Web URL: `https://bhl-open-data.s3.amazonaws.com/images/[BarCode]/[BarCode]_0000.jp2`
 
-Using the `ItemID` field from the Item file (zero-padded to six digits) and the `PageID` field from the Page file (zero-padded to eight digits), the path to the OCR content for a given page is constructed similarly: 
+Using the `ItemID` field from the `/data/item.txt` file (zero-padded to six digits) and the `PageID` field from the `/data/page.txt` file (zero-padded to eight digits), the path to the OCR content for a given page in an Item is constructed as follows: 
 
-* S3 path: `s3://bhl-open-data/ocr/[ItemID]/[ItemID]-[PageID]-0000.txt`
-* Web URL: `https://bhl-open-data.s3.amazonaws.com/ocr/[ItemID]/[ItemID]-[PageID]-0000.txt`
+* S3 path: `s3://bhl-open-data/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0000.txt`
+* Web URL: `https://bhl-open-data.s3.amazonaws.com/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0000.txt`
+
+Similarly, using the `PartID` field from the `/data/part.txt` file, the connection between Part and Page in the `/data/partpage.txt` file, and the `PageID` field from the `/data/page.txt` file (zero-padded to eight digits), the path to the OCR content for a page in a Part is constructed as follows: 
+
+* S3 path: `s3://bhl-open-data/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0000.txt`
+* Web URL: `https://bhl-open-data.s3.amazonaws.com/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0000.txt`
 
 ## Update Frequency
 
