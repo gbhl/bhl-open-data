@@ -6,31 +6,35 @@ To document Earth's species and understand the complexities of swiftly-changing 
 
 In 2024, BHL was accepted into the [Amazon AWS Open Data Sponsorship Program](https://aws.amazon.com/opendata/open-data-sponsorship-program/) and has uploaded its metadata, JPEG-2000 images, and OCR to AWS S3 for use by anyone at no cost.
 
-## Open Data
+# Open Data
 
-BHL's data is structured in a simple format of three "folders" in a bucket at at Amazon Web Services S3. The first folder, "/images/", contains the JPEG 2000 page images of the scanned content at BHL and is organized by an identifying string. The second folder, "/ocr/" contains the text content of the page images, sourced either from automated Optical Character Recognition (OCR) software or manual transcription efforts. The third folder, "/data/", contains the data export files (in tab-separated format) that contain the majority of BHL's data. The files, images and OCR are all logically connected through identifiers and ID numbers.
+BHL's data is structured in into four "folders" in a bucket at at Amazon Web Services S3. The first folder, "/images/", contains the JPEG 2000 page images of the scanned content at BHL and is organized by an identifying string. The second folder, "/ocr/" contains the text content of the page images, sourced either from automated Optical Character Recognition (OCR) software or manual transcription efforts. The third folder, "/scandata/", contains XML files that describe the pages of the item. The fourth folder, "/data/", contains the data export files (in tab-separated format) that contain the majority of BHL's data. 
 
-The files are organized via the following structure:
+The files, images and OCR are all logically connected through identifiers and ID numbers.
 
 ```
 bhl-open-data/
     images/
         [BarCode]/
-            [BarCode]_0000.jp2
             [BarCode]_0001.jp2
+            [BarCode]_0002.jp2
             [...]
             [BarCode]_[####].jp2
     ocr/
         item-[ItemID]/
-            item-[ItemID]-[PageID]-0000.txt
             item-[ItemID]-[PageID]-0001.txt
+            item-[ItemID]-[PageID]-0002.txt
             [...]
             item-[ItemID]-[PageID]-[####].txt
         part-[PartID]/
-            part-[PartID]-[PageID]-0000.txt
             part-[PartID]-[PageID]-0001.txt
+            part-[PartID]-[PageID]-0002.txt
             [...]
             part-[PartID]-[PageID]-[####].txt
+    scandata/
+        [BarCode]_scandata.xml
+        [...]
+        [BarCodeN]_scandata.xml
     data/
         title.txt.gz
         item.txt.gz
@@ -46,17 +50,23 @@ bhl-open-data/
         doi.txt.gz
 ```
 
-### Images
+## Images
 
 Images are stored as JPEG 2000 files with some amount of compression applied to retain a balance of quality and size. Generally BHL strives for 300 DPI or better resolution. Alternate file formats or sizes are not supplied at this time. 
 
-### OCR
+## OCR
 
 OCR is stored as individual text files in parallel to the page images. The OCR is broken into two sets of files, one for *items* and one for *parts*. *Items* are usually cover-to-cover book-like things while *Parts* are usually individual journal articles. 
 
 ItemIDs and PartIDs are zero-padded to six digits. PageIDs are zero-padded to eight digits. Sequence numbers start with 1.
 
-### Data
+## Scandata
+
+The Scandata XML files contain page level metadata including page number and page type. The format is the same that is used at the Internet Archive. Little documentation exists, but only the pages marked as `<addToAccessFormats>true</addToAccessFormats>` are included in this AWS data set. 
+
+For this reason, the `leafNum` values in the Scandata XML will not correspond to the Sequence Number of images or OCR. Sequence numbers can be correlated to the scandata file sorting by `leafNum` and looping through them while skipping those pages where `addToAccessFormats` is `false`.
+
+## Data
 
 Data files are described in detail at https://www.biodiversitylibrary.org/data/TSV/BHLExportSchema.pdf but described briefly below. 
 
@@ -84,27 +94,32 @@ Data files are described in detail at https://www.biodiversitylibrary.org/data/T
 
 * The **DOI** table contains information about Digital Object Identifiers that have been assigned to BHL entities (Titles, Items, or Pages).
 
-## Using the Data
+# Using the Data
 
-From the `/data/item.txt` file, the `BarCode` field is used to create the S3 path or URL to the image file. Pages are numbered sequentially and do not skip any numbers. Due to historical inconsistencies, the first image from an item may be number `[BarCode]_0000.jp2` or `[BarCode]_0001.jp2`.
+From the `/data/item.txt` file, the `BarCode` field is used to create the S3 path or URL to the image file. Pages are numbered sequentially and do not skip any numbers. The first image from an item is always `[BarCode]_0001.jp2`.
 
-* S3 Path: `s3://bhl-open-data/images/[BarCode]/[BarCode]_0000.jp2`
-* Web URL: `https://bhl-open-data.s3.amazonaws.com/images/[BarCode]/[BarCode]_0000.jp2`
+* S3 Path: `s3://bhl-open-data/images/[BarCode]/[BarCode]_0001.jp2`
+* Web URL: `https://bhl-open-data.s3.amazonaws.com/images/[BarCode]/[BarCode]_0001.jp2`
 
 Using the `ItemID` field from the `/data/item.txt` file (zero-padded to six digits) and the `PageID` field from the `/data/page.txt` file (zero-padded to eight digits), the path to the OCR content for a given page in an Item is constructed as follows: 
 
-* S3 path: `s3://bhl-open-data/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0000.txt`
-* Web URL: `https://bhl-open-data.s3.amazonaws.com/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0000.txt`
+* S3 path: `s3://bhl-open-data/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0001.txt`
+* Web URL: `https://bhl-open-data.s3.amazonaws.com/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0001.txt`
 
 Similarly, using the `PartID` field from the `/data/part.txt` file, the connection between Part and Page in the `/data/partpage.txt` file, and the `PageID` field from the `/data/page.txt` file (zero-padded to eight digits), the path to the OCR content for a page in a Part is constructed as follows: 
 
-* S3 path: `s3://bhl-open-data/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0000.txt`
-* Web URL: `https://bhl-open-data.s3.amazonaws.com/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0000.txt`
+* S3 path: `s3://bhl-open-data/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0001.txt`
+* Web URL: `https://bhl-open-data.s3.amazonaws.com/ocr/item-[ItemID]/item-[ItemID]-[PageID]-0001.txt`
 
-## Update Frequency
+# Update Frequency
 
-Content is updated monthly, but due to conetent updates and new content ingest, this dataset may be out of date for up to a month compared to BHL's live content.
+Images, OCR and Scandata content is updated weekly. TSV Data files are updated monthly.
 
-## Copyright Notes
+# Copyright Notes
 
 While most content on BHL is either public domain or licensed through Creative Commons, some content from BHL remains in copyright with no conditions for reuse and is suppressed from this repository. The item.txt and part.txt files contain details on copyright status and Creative Commons licenses for all items in BHL.
+
+# Special Notes
+
+The `NOTES.md` file describes some special cases to be considered when using combining the data from the TSV Data files, Images, and OCR.
+
