@@ -54,6 +54,8 @@ Images are stored as JPEG 2000 files with some amount of compression applied to 
 
 OCR is stored as individual text files in parallel to the page images. The OCR is broken into two sets of files, one for *items* and one for *parts*. *Items* are usually cover-to-cover book-like things while *Parts* are usually individual journal articles. 
 
+ItemIDs and PartIDs are zero-padded to six digits. PageIDs are zero-padded to eight digits. Sequence numbers start with 1.
+
 ### Data
 
 Data files are described in detail at https://www.biodiversitylibrary.org/data/TSV/BHLExportSchema.pdf but described briefly below. 
